@@ -24,7 +24,7 @@ def split_apr(docname):
 
 		apr_doc.child_apr = child_req
 		apr_doc.save()
-		apr_doc.submit(ignore_permissions=True)
+		apr_doc.submit()
 
 @frappe.whitelist()
 def make_apr(docname):
