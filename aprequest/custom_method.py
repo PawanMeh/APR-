@@ -7,8 +7,8 @@ from frappe.model.mapper import get_mapped_doc
 from datetime import datetime
 import re
 
+@frappe.whitelist()
 def split_apr(docname):
-	#loop through count and make that many APRs, copy similar fields
 	apr_doc = frappe.get_doc('AP Request', docname)
 	split_no = apr_doc.no_of_split
 	if split_no > 0:
@@ -20,17 +20,19 @@ def split_apr(docname):
 			ap_doc.supplier = apr_doc.supplier
 			ap_doc.parent_apr = apr_doc.name
 			ap_doc.insert(ignore_mandatory=True, ignore_permissions=True)
-			child_req = ap_doc.name + '/'
+			child_req += ap_doc.name + '/'
 
 		apr_doc.child_apr = child_req
-		apr_doc.update(ignore_permissions=True)
+		apr_doc.save()
+		apr_doc.submit(ignore_permissions=True)
 
+@frappe.whitelist()
 def make_apr(docname):
-	#make apr from issue
 	issue_doc = frappe.get_doc('Issue', docname)
 	apr_doc = frappe.new_doc('AP Request')
 	apr_doc.apr_date =  today()
 	apr_doc.apr_status = 'Initiated'
 	apr_doc.apr_assigned_to = issue_doc.apr_assigned_to
 	apr_doc.supplier = issue_doc.supplier
+	apr_doc.parent_issue = issue_doc.name
 	apr_doc.insert(ignore_mandatory=True, ignore_permissions=True)
