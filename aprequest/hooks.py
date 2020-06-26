@@ -107,7 +107,11 @@ app_license = "MIT"
 # 		"aprequest.tasks.monthly"
 # 	]
 # }
-
+doc_events = {
+	"Issue": {
+		"validate": ["aprequest.custom_method.insert_comm_history"]
+	}
+}
 # Testing
 # -------
 

@@ -35,8 +35,9 @@ def make_apr(docname):
 	apr_doc.supplier = issue_doc.supplier
 	apr_doc.parent_issue = issue_doc.name
 	apr_doc.insert(ignore_mandatory=True, ignore_permissions=True)
-	issue_doc.apr = apr_doc.name
-	issue_doc.save()
+	if not issue_doc.apr:
+		issue_doc.apr = apr_doc.name
+		issue_doc.save()
 	if apr_doc.name:
 		frappe.msgprint("APR is created")
 
@@ -60,3 +61,26 @@ def make_sap_feed(docname):
 	sap_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 	if sap_doc.name:
 		frappe.msgprint("SAP Feed is created")
+
+def insert_comm_history(self, method):
+	if self.apr:
+		comm = frappe.db.sql('''
+					select
+						name
+					from
+						`tabCommunication History`
+					where
+						ap_issue = %s
+					''', (self.name))
+		if comm:
+			pass
+		else:
+			comm_doc = frappe.new_doc('Communication History')
+			comm_doc.ap_issue = self.name
+			comm_doc.subject = self.subject
+			comm_doc.status = self.status
+			comm_doc.sent_to = self.raised_by
+			comm_doc.parent = self.apr
+			comm_doc.parenttype = "AP Request"
+			comm_doc.parentfield = "conversation"
+			comm_doc.insert(ignore_mandatory=True, ignore_permissions=True)
