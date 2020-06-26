@@ -35,6 +35,8 @@ def make_apr(docname):
 	apr_doc.supplier = issue_doc.supplier
 	apr_doc.parent_issue = issue_doc.name
 	apr_doc.insert(ignore_mandatory=True, ignore_permissions=True)
+	issue_doc.apr = apr_doc.name
+	issue_doc.save()
 	if apr_doc.name:
 		frappe.msgprint("APR is created")
 
