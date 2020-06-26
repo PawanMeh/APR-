@@ -1,10 +1,7 @@
 from __future__ import unicode_literals
 import frappe
-import frappe.defaults
 from frappe.utils import cint, flt, add_months, today, date_diff, getdate, add_days, cstr, time_diff_in_hours
 from frappe import _
-from frappe.model.mapper import get_mapped_doc
-from datetime import datetime
 import re
 
 @frappe.whitelist()
@@ -25,6 +22,8 @@ def split_apr(docname):
 		apr_doc.child_apr = child_req
 		apr_doc.save()
 		apr_doc.submit()
+		if apr_doc.name:
+			frappe.msgprint("APR is split")
 
 @frappe.whitelist()
 def make_apr(docname):
@@ -36,6 +35,8 @@ def make_apr(docname):
 	apr_doc.supplier = issue_doc.supplier
 	apr_doc.parent_issue = issue_doc.name
 	apr_doc.insert(ignore_mandatory=True, ignore_permissions=True)
+	if apr_doc.name:
+		frappe.msgprint("APR is created")
 
 @frappe.whitelist()
 def make_sap_feed(docname):
@@ -55,3 +56,5 @@ def make_sap_feed(docname):
 	sap_doc.invoice_date = apr_doc.invoice_date
 	sap_doc.invoice_ref = apr_doc.invoice_ref
 	sap_doc.insert(ignore_mandatory=True, ignore_permissions=True)
+	if sap_doc.name:
+		frappe.msgprint("SAP Feed is created")
