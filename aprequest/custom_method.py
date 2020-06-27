@@ -32,13 +32,14 @@ def make_apr(docname):
 	apr_doc.apr_date =  today()
 	apr_doc.apr_status = 'Initiated'
 	apr_doc.apr_assigned_to = issue_doc.apr_assigned_to
-	apr_doc.supplier = issue_doc.supplier
+	apr_doc.supplier = issue_doc.vendor	
 	apr_doc.parent_issue = issue_doc.name
 	apr_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 	if not issue_doc.apr:
 		issue_doc.apr = apr_doc.name
 		issue_doc.save()
 	if apr_doc.name:
+		cpy_attachments('Issue', docname, 'AP Request', apr_doc.name)
 		frappe.msgprint("APR is created")
 
 @frappe.whitelist()
@@ -59,7 +60,9 @@ def make_sap_feed(docname):
 	sap_doc.invoice_date = apr_doc.invoice_date
 	sap_doc.invoice_ref = apr_doc.invoice_ref
 	sap_doc.insert(ignore_mandatory=True, ignore_permissions=True)
+	file_url = apr_doc.final_invoice_copy or apr_doc.final_approval_copy
 	if sap_doc.name:
+		cpy_attachments('AP Request', apr_doc.name, 'SAP Feed', sap_doc.name,file_url)
 		frappe.msgprint("SAP Feed is created")
 
 def insert_comm_history(self, method):
@@ -84,3 +87,34 @@ def insert_comm_history(self, method):
 			comm_doc.parenttype = "AP Request"
 			comm_doc.parentfield = "conversation"
 			comm_doc.insert(ignore_mandatory=True, ignore_permissions=True)
+
+@frappe.whitelist()
+def cpy_attachments(source_doctype, source_docname, target_doctype, target_docname, file_url=None):
+	if file_url:
+		attachments = frappe.db.sql('''
+					select
+						name
+					from
+						`tabFile`
+					where
+						attached_to_doctype = %s and
+						attached_to_name = %s and
+						file_url = %s
+					''', (source_doctype, source_docname, file_url), as_dict=1)
+	else:
+		attachments = frappe.db.sql('''
+					select
+						name
+					from
+						`tabFile`
+					where
+						attached_to_doctype = %s and
+						attached_to_name = %s
+					''', (source_doctype, source_docname), as_dict=1)
+
+	for attachment in attachments:
+		old_doc = frappe.get_doc('File', attachment['name'])
+		new_doc = frappe.copy_doc(old_doc)
+		new_doc.attached_to_doctype = target_doctype
+		new_doc.attached_to_name = target_docname
+		new_doc.insert()
