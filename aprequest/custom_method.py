@@ -32,7 +32,7 @@ def make_apr(docname):
 	apr_doc.apr_date =  today()
 	apr_doc.apr_status = 'Initiated'
 	apr_doc.apr_assigned_to = issue_doc.apr_assigned_to
-	apr_doc.supplier = issue_doc.vendor	
+	apr_doc.supplier = issue_doc.supplier	
 	apr_doc.parent_issue = issue_doc.name
 	apr_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 	if not issue_doc.apr:
