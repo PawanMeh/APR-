@@ -67,6 +67,17 @@ def make_sap_feed(docname):
 
 def insert_comm_history(self, method):
 	if self.apr:
+		apr = frappe.db.sql('''
+					select
+						apr
+					from
+						`tabIssue`
+					where
+						where name = %s
+				''', (self.name), as_list=1)
+		if self.apr != apr[0][0]:
+			frappe.throw(_('Issue is already mapped to APR. APR cannot be changed.'))
+		
 		comm = frappe.db.sql('''
 					select
 						name
