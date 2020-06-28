@@ -73,7 +73,7 @@ def insert_comm_history(self, method):
 					from
 						`tabIssue`
 					where
-						where name = %s
+						name = %s
 				''', (self.name), as_list=1)
 		if self.apr != apr[0][0]:
 			frappe.throw(_('Issue is already mapped to APR. APR cannot be changed.'))
