@@ -75,8 +75,8 @@ def insert_comm_history(self, method):
 					where
 						name = %s
 				''', (self.name), as_list=1)
-			if self.apr != apr[0][0] and apr[0][0]:
-				frappe.throw(_("Issue is already mapped to APR {0}. APR cannot be changed.".format(apr[0][0])))
+		if self.apr != apr[0][0] and apr[0][0]:
+			frappe.throw(_("Issue is already mapped to APR {0}. APR cannot be changed.".format(apr[0][0])))
 		
 		comm = frappe.db.sql('''
 					select
