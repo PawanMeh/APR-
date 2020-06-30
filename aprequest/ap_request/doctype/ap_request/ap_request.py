@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
 from frappe import _
+from aprequest.custom_method import make_sap_feed, split_apr
 
 class APRequest(Document):
 	def validate(self):
@@ -49,9 +50,58 @@ class APRequest(Document):
 		if self.closure_type == "Non PO Invoice" and not self.final_approval_copy:
 			frappe.throw(_("Final Invoice copy is mandatory if closure is by PO Invoice or Non PO Invoice"))
 
+		if self.closure_type == "Split" and self.no_of_split < 1:
+			frappe.throw(_("Enter no of APRs to be created via Split"))
+
 	def on_update(self):
 		pass
 	def on_submit(self):
-		pass
+		#validate mandatory answers
+		if self.closure_type:
+			question = frappe.db.sql('''
+							select
+								enforce_mandatory
+							from
+								`tabQuestion`
+							where
+								type = 'APR'
+						''', as_list=1)
+			if question[0][0]:
+				for d in self.question:
+					if d.response == "No":
+						frappe.throw(_("Questionnaire repsonse should be either NA or Yes"))
+		else:
+			frappe.throw(_("Closure Type is mandatory"))
+
+		related_aprs = frappe.db.sql('''
+						select
+							name
+						from
+							`tabAP Request`
+						where
+							docstatus = 0 and
+							parent_apr = %s
+						''', self.name, as_list=1)
+
+		if related_aprs:
+			frappe.throw(_("All related APRs should be closed before final approval of current APR"))
+
+		related_issues =  frappe.db.sql('''
+								select
+									name
+								from
+									`tabIssue`
+								where
+									apr = %s and status != 'Closed'
+								''', self.name, as_list=1)
+
+		if related_issues:
+			frappe.throw(_("All related Issues should be closed before final approval of current APR"))
+
+		if self.closure_type in ["PO Invoice", "Non PO Invoice"]:
+			make_sap_feed(self.name)
+		elif self.closure_type == "Split":
+			split_apr(self.name)
+
 	def on_cancel(self):
 		pass

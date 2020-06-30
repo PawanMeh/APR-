@@ -32,7 +32,7 @@ def make_apr(docname):
 	apr_doc.apr_date =  today()
 	apr_doc.apr_status = 'Initiated'
 	apr_doc.apr_assigned_to = issue_doc.apr_assigned_to
-	apr_doc.supplier = issue_doc.supplier	
+	apr_doc.supplier = issue_doc.vendor	
 	apr_doc.parent_issue = issue_doc.name
 	apr_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 	if not issue_doc.apr:
@@ -50,7 +50,8 @@ def make_sap_feed(docname):
 	sap_doc.sapf_status = "Initiated"
 	sap_doc.apr = apr_doc.name
 	sap_doc.apr_date = apr_doc.apr_date
-	sap_doc.apr_reviewed_by = apr_doc.apr_reviewed_by
+	sap_doc.sapf_assigned_to = apr_doc.sapf_assigned_to
+	sap_doc.sapf_reviewed_by = apr_doc.sapf_reviewed_by
 	sap_doc.company_code = apr_doc.company_code
 	sap_doc.supplier = apr_doc.supplier
 	sap_doc.sap_po_number = apr_doc.sap_po_number
@@ -63,6 +64,8 @@ def make_sap_feed(docname):
 	file_url = apr_doc.final_invoice_copy or apr_doc.final_approval_copy
 	if sap_doc.name:
 		cpy_attachments('AP Request', apr_doc.name, 'SAP Feed', sap_doc.name,file_url)
+		apr_doc.sapf_id = sap_doc.name
+		apr_doc.save()
 		frappe.msgprint("SAP Feed is created")
 
 def insert_comm_history(self, method):
