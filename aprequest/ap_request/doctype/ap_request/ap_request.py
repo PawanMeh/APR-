@@ -81,7 +81,7 @@ class APRequest(Document):
 			frappe.throw(_("SAP Assigned To/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Obtained is mandatory for Non PO Invoice"))
 		#PO Line Table validations are pending
 
-		if self.invoice_date > today():
+		if datediff(self.invoice_date, today()) > 0:
 			frappe.throw(_("Invoice date cannot be greater than current date"))
 		#calc
 		planned_cost = 0
