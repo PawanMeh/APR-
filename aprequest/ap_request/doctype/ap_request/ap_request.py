@@ -89,7 +89,7 @@ class APRequest(Document):
 		for d in self.invoice_line:
 			planned_cost += d.inv_line_amt
 		self.planned_cost = planned_cost
-		self.balance_amt = self.invoice_amt - self.planned_cost - self.unplanned_cost
+		self.balance_amt = self.invoice_amount - self.planned_cost - self.unplanned_cost
 
 	def on_update(self):
 		pass
