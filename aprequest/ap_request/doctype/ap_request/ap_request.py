@@ -7,6 +7,7 @@ import frappe
 from frappe.model.document import Document
 from frappe import _
 from aprequest.custom_method import make_sap_feed, split_apr
+from frappe.utils import cint, flt, add_months, today, date_diff, getdate, add_days, cstr, time_diff_in_hours
 
 class APRequest(Document):
 	def validate(self):
@@ -44,6 +45,9 @@ class APRequest(Document):
 		if inv_refs:
 			frappe.throw(_("Duplicate invoice exists for {0}".format("<a href='desk#Form/AP Request/{0}'> AP Request {0} </a>".format(inv_refs[0][0]))))
 
+		if not (self.parent_apr or self.parent_issue):
+			frappe.throw(_("Cannot create APR without reference to Issue or parent APR"))
+
 		if self.closure_type in ["PO Invoice", "Non PO Invoice"] and not self.final_invoice_copy:
 			frappe.throw(_("Final Invoice copy is mandatory if closure is by PO Invoice or Non PO Invoice"))
 
@@ -52,6 +56,40 @@ class APRequest(Document):
 
 		if self.closure_type == "Split" and self.no_of_split < 1:
 			frappe.throw(_("Enter no of APRs to be created via Split"))
+		elif self.closure_type in ["PO Invoice", "Non PO Invoice"] and self.no_split > 1:
+			frappe.throw(_("No of splits should be zero for closure type of PO and Non PO Invoice"))
+
+		if self.closure_type == "Split" and (self.sap_po_number or self.company_code_sap
+			or self.sapf_assigned_to or self.final_invoice_copy or self.final_approval_copy or
+			self.eb_npi_approver or self.eb_npi_email or self.eb_npi_approval_obtained):
+			frappe.throw(_("There should be no values in SAP PO Number/SAP Company Code/SAPF Assigned to/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Obtained for Closure Type of split"))
+		elif self.closure_type == "Split" and (self.balance_amt != self.invoice_amount):
+			frappe.throw(_("Balance Amount should be equal to invoice amount"))
+		elif self.closure_type in ["PO Invoice", "Non PO Invoice"] and self.balance_amt != 0:
+			frappe.throw(_("Balance Amount should be zero for PO and Non PO Invoice"))
+		elif self.closure_type == "PO Invoice" and (self.final_approval_copy or
+			self.eb_npi_approver or self.eb_npi_email or self.eb_npi_approval_obtained):
+			frappe.throw("There should be no values in Final Approval Copy/EB NPI Approver/EB NPI Obtained for Closure Type of PO Invoice")
+		elif self.closure_type == "PO Invoice" and (not self.sap_po_number or not self.company_code_sap
+			or not self.sapf_assigned_to or not self.final_invoice_copy):
+			frappe.throw(_("SAP PO Number/SAP Company Code/SAP Assigned To/Final Invoice Copy is mandatory for PO Invoice"))
+		elif self.closure_type == "Non PO Invoice" and (self.sap_po_number):
+			frappe.throw(_("SAP PO Number should be blank for PO Invoice"))
+		elif self.closure_type == "Non PO Invoice" and (not self.company_code_sap
+			or not self.sapf_assigned_to or not self.final_invoice_copy or not self.final_approval_copy or
+			not self.eb_npi_approver or not self.eb_npi_email or not self.eb_npi_approval_obtained):
+			frappe.throw(_("SAP Assigned To/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Obtained is mandatory for Non PO Invoice"))
+		#PO Line Table validations are pending
+
+		if self.invoice_date > today():
+			frappe.throw(_("Invoice date cannot be greater than current date"))
+		#calc
+		planned_cost = 0
+		bal_amt = 0
+		for d in self.invoice_line:
+			planned_cost += d.inv_line_amt
+		self.planned_cost = planned_cost
+		self.balance_amt = self.invoice_amt - self.planned_cost - self.unplanned_cost
 
 	def on_update(self):
 		pass

@@ -60,11 +60,14 @@ def make_sap_feed(docname):
 	sap_doc.invoice_amount = apr_doc.invoice_amount
 	sap_doc.invoice_date = apr_doc.invoice_date
 	sap_doc.invoice_ref = apr_doc.invoice_ref
+	sap_doc.company_code_sap = apr_doc.company_code_sap
+	sap_doc.closure_type = apr_doc.closure_type
 	sap_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 	file_url = apr_doc.final_invoice_copy or apr_doc.final_approval_copy
 	if sap_doc.name:
 		cpy_attachments('AP Request', apr_doc.name, 'SAP Feed', sap_doc.name,file_url)
 		apr_doc.sapf_id = sap_doc.name
+		apr_doc.sapf_status = "Initiated"
 		apr_doc.save()
 		frappe.msgprint("SAP Feed is created")
 
@@ -78,8 +81,9 @@ def insert_comm_history(self, method):
 					where
 						name = %s
 				''', (self.name), as_list=1)
-		if self.apr != apr[0][0] and apr[0][0]:
-			frappe.throw(_("Issue is already mapped to APR {0}. APR cannot be changed.".format(apr[0][0])))
+		if apr:
+			if self.apr != apr[0][0]:
+				frappe.throw(_("Issue is already mapped to APR {0}. APR cannot be changed.".format(apr[0][0])))
 		
 		comm = frappe.db.sql('''
 					select
