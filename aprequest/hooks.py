@@ -109,7 +109,7 @@ app_license = "MIT"
 # }
 doc_events = {
 	"Issue": {
-		"validate": ["aprequest.custom_method.insert_comm_history"]
+		"after_insert": ["aprequest.custom_method.insert_comm_history"]
 	}
 }
 # Testing
