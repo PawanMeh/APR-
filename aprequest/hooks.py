@@ -109,7 +109,7 @@ app_license = "MIT"
 # }
 doc_events = {
 	"Issue": {
-		"after_insert": ["aprequest.custom_method.insert_comm_history"]
+		"before_save": ["aprequest.custom_method.insert_comm_history"]
 	}
 }
 # Testing
