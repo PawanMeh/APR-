@@ -93,7 +93,7 @@ class APRequest(Document):
 		if self.closure_type == "Split" and (self.balance_amt != self.invoice_amount):
 			frappe.throw(_("Balance Amount should be equal to invoice amount"))
 		elif self.closure_type in ["PO Invoice", "Non PO Invoice"] and self.balance_amt != 0:
-			frappe.throw(_("Balance Amount should be zero for PO and Non PO Invoice"))
+			frappe.throw(_("Balance Amount should be zero for PO and Non PO Invoice. Check invoice amounts and PO line amounts."))
 
 	def on_update(self):
 		pass

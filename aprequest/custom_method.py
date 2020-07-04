@@ -80,6 +80,7 @@ def make_sap_feed(docname):
 		apr_doc.sapf_id = sap_doc.name
 		apr_doc.sapf_status = "Initiated"
 		apr_doc.save()
+		copy_po_line(apr_doc.name, sap_doc.name)
 		frappe.msgprint("SAP Feed is created")
 
 def insert_comm_history(self, method):
@@ -147,3 +148,16 @@ def cpy_attachments(source_doctype, source_docname, target_doctype, target_docna
 		new_doc.attached_to_doctype = target_doctype
 		new_doc.attached_to_name = target_docname
 		new_doc.insert()
+
+def copy_po_line(source_docname, target_docname):
+	apr_doc = frappe.get_doc('AP Request', source_docname)
+	target_doc = frappe.get_doc('SAP Feed', target_docname)
+	for d in apr_doc.invoice_line:
+		target_doc.append('invoice_line',
+			{'po_line_ref': d.po_line_ref,
+			'po_line_amt': d.po_line_amt,
+			'po_line_qty': d.po_line_qty,
+			'inv_line_qty': d.inv_line_qty,
+			'inv_line_amt': d.inv_line_amt,
+		})
+	target_doc.save()
