@@ -56,7 +56,7 @@ class APRequest(Document):
 
 		if self.closure_type == "Split" and self.no_of_split < 1:
 			frappe.throw(_("Enter no of APRs to be created via Split"))
-		elif self.closure_type in ["PO Invoice", "Non PO Invoice"] and self.no_split > 1:
+		elif self.closure_type in ["PO Invoice", "Non PO Invoice"] and self.no_of_split > 1:
 			frappe.throw(_("No of splits should be zero for closure type of PO and Non PO Invoice"))
 
 		if self.closure_type == "Split" and (self.sap_po_number or self.company_code_sap
