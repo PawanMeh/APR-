@@ -63,10 +63,6 @@ class APRequest(Document):
 			or self.final_invoice_copy or self.final_approval_copy or
 			self.eb_npi_approver or self.eb_npi_email or self.eb_npi_approval_obtained):
 			frappe.throw(_("There should be no values in SAP PO Number/SAP Company Code/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Obtained for Closure Type of split"))
-		elif self.closure_type == "Split" and (self.balance_amt != self.invoice_amount):
-			frappe.throw(_("Balance Amount should be equal to invoice amount"))
-		elif self.closure_type in ["PO Invoice", "Non PO Invoice"] and self.balance_amt != 0:
-			frappe.throw(_("Balance Amount should be zero for PO and Non PO Invoice"))
 		elif self.closure_type == "PO Invoice" and (self.final_approval_copy or
 			self.eb_npi_approver or self.eb_npi_email or self.eb_npi_approval_obtained):
 			frappe.throw("There should be no values in Final Approval Copy/EB NPI Approver/EB NPI Obtained for Closure Type of PO Invoice")
@@ -82,7 +78,7 @@ class APRequest(Document):
 		elif self.closure_type == "Non PO Invoice" and (not self.company_code_sap
 			or not self.sapf_assigned_to or not self.final_invoice_copy or not self.final_approval_copy or
 			not self.eb_npi_approver or not self.eb_npi_email or not self.eb_npi_approval_obtained):
-			frappe.throw(_("SAP Assigned To/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Obtained is mandatory for Non PO Invoice"))
+			frappe.throw(_("SAP Company Code/SAP Assigned To/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Obtained is mandatory for Non PO Invoice"))
 		#PO Line Table validations are pending
 
 		if date_diff(self.invoice_date, today()) > 0:
@@ -94,6 +90,10 @@ class APRequest(Document):
 			planned_cost += d.inv_line_amt
 		self.planned_cost = planned_cost
 		self.balance_amt = flt(self.invoice_amount) - flt(self.planned_cost) - flt(self.unplanned_cost)
+		if self.closure_type == "Split" and (self.balance_amt != self.invoice_amount):
+			frappe.throw(_("Balance Amount should be equal to invoice amount"))
+		elif self.closure_type in ["PO Invoice", "Non PO Invoice"] and self.balance_amt != 0:
+			frappe.throw(_("Balance Amount should be zero for PO and Non PO Invoice"))
 
 	def on_update(self):
 		pass
