@@ -7,6 +7,9 @@ import frappe
 from frappe.model.document import Document
 
 class SAPFeed(Document):
+	def validate(self):
+		if not self.apr:
+			frappe.throw(_("SAP Feed cannot be created without reference to APR"))
 	def on_submit(self):
 		apr_doc = frappe.get_doc('AP Request', self.apr)
 		apr_doc.posting_date = self.posting_date

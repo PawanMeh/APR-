@@ -17,6 +17,17 @@ def split_apr(docname):
 			ap_doc.supplier = apr_doc.supplier
 			ap_doc.parent_apr = apr_doc.name
 			ap_doc.insert(ignore_mandatory=True, ignore_permissions=True)
+			for d in apr_doc.conversation
+				comm_doc = frappe.new_doc('Communication History')
+				comm_doc.ap_issue = apr_doc.ap_issue
+				issue_doc = frappe.get_doc('Issue', apr_doc.parent_issue)
+				comm_doc.subject = issue_doc.subject
+				comm_doc.status = issue_doc.status
+				comm_doc.sent_to = issue_doc.raised_by
+				comm_doc.parent = ap_doc.name
+				comm_doc.parenttype = "AP Request"
+				comm_doc.parentfield = "conversation"
+				comm_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 			child_req += ap_doc.name + '/'
 
 		apr_doc.child_apr = child_req

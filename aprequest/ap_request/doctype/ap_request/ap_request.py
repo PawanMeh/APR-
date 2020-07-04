@@ -73,6 +73,10 @@ class APRequest(Document):
 		elif self.closure_type == "PO Invoice" and (not self.sap_po_number or not self.company_code_sap
 			or not self.sapf_assigned_to or not self.final_invoice_copy):
 			frappe.throw(_("SAP PO Number/SAP Company Code/SAP Assigned To/Final Invoice Copy is mandatory for PO Invoice"))
+		elif self.closure_type == "PO Invoice":
+			for d in self.invoice_line:
+				if (not d.po_line_ref or not d.po_line_amt or not d.po_line_qty or not d.inv_line_amt or not d.inv_line_qty):
+					frappe.throw(_("Please enter PO line details"))
 		elif self.closure_type == "Non PO Invoice" and (self.sap_po_number):
 			frappe.throw(_("SAP PO Number should be blank for PO Invoice"))
 		elif self.closure_type == "Non PO Invoice" and (not self.company_code_sap
