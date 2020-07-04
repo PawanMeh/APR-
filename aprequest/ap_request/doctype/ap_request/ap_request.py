@@ -60,9 +60,9 @@ class APRequest(Document):
 			frappe.throw(_("No of splits should be zero for closure type of PO and Non PO Invoice"))
 
 		if self.closure_type == "Split" and (self.sap_po_number or self.company_code_sap
-			or self.sapf_assigned_to or self.final_invoice_copy or self.final_approval_copy or
+			or self.final_invoice_copy or self.final_approval_copy or
 			self.eb_npi_approver or self.eb_npi_email or self.eb_npi_approval_obtained):
-			frappe.throw(_("There should be no values in SAP PO Number/SAP Company Code/SAPF Assigned to/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Obtained for Closure Type of split"))
+			frappe.throw(_("There should be no values in SAP PO Number/SAP Company Code/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Obtained for Closure Type of split"))
 		elif self.closure_type == "Split" and (self.balance_amt != self.invoice_amount):
 			frappe.throw(_("Balance Amount should be equal to invoice amount"))
 		elif self.closure_type in ["PO Invoice", "Non PO Invoice"] and self.balance_amt != 0:
