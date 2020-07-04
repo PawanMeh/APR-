@@ -20,7 +20,7 @@ def split_apr(docname):
 			for d in apr_doc.conversation:
 				comm_doc = frappe.new_doc('Communication History')
 				comm_doc.ap_issue = d.ap_issue
-				issue_doc = frappe.get_doc('Issue', d.parent_issue)
+				issue_doc = frappe.get_doc('Issue', d.ap_issue)
 				comm_doc.subject = issue_doc.subject
 				comm_doc.status = issue_doc.status
 				comm_doc.sent_to = issue_doc.raised_by
