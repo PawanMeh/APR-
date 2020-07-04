@@ -19,8 +19,8 @@ def split_apr(docname):
 			ap_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 			for d in apr_doc.conversation:
 				comm_doc = frappe.new_doc('Communication History')
-				comm_doc.ap_issue = apr_doc.ap_issue
-				issue_doc = frappe.get_doc('Issue', apr_doc.parent_issue)
+				comm_doc.ap_issue = d.ap_issue
+				issue_doc = frappe.get_doc('Issue', d.parent_issue)
 				comm_doc.subject = issue_doc.subject
 				comm_doc.status = issue_doc.status
 				comm_doc.sent_to = issue_doc.raised_by
