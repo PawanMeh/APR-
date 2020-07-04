@@ -456,7 +456,7 @@
   {
    "allow_bulk_edit": 0, 
    "allow_in_quick_entry": 0, 
-   "allow_on_submit": 0, 
+   "allow_on_submit": 1, 
    "bold": 0, 
    "collapsible": 0, 
    "columns": 0, 
@@ -1922,7 +1922,7 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 0, 
- "modified": "2020-07-04 06:50:11.030573", 
+ "modified": "2020-07-04 06:59:48.924029", 
  "modified_by": "Administrator", 
  "module": "AP Request", 
  "name": "AP Request", 

@@ -85,7 +85,7 @@
   {
    "allow_bulk_edit": 0, 
    "allow_in_quick_entry": 0, 
-   "allow_on_submit": 1, 
+   "allow_on_submit": 0, 
    "bold": 0, 
    "collapsible": 0, 
    "columns": 0, 
@@ -1190,7 +1190,7 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 0, 
- "modified": "2020-07-04 06:55:28.077814", 
+ "modified": "2020-07-04 06:59:23.615681", 
  "modified_by": "Administrator", 
  "module": "AP Request", 
  "name": "SAP Feed", 
