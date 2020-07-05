@@ -17,6 +17,7 @@ def split_apr(docname):
 			ap_doc.supplier = apr_doc.supplier
 			ap_doc.parent_apr = apr_doc.name
 			ap_doc.insert(ignore_mandatory=True, ignore_permissions=True)
+			cpy_attachments('AP Request', docname, 'AP Request', ap_doc.name)
 			for d in apr_doc.conversation:
 				comm_doc = frappe.new_doc('Communication History')
 				comm_doc.ap_issue = d.ap_issue
@@ -61,6 +62,8 @@ def make_sap_feed(docname):
 	sap_doc.sapf_status = "Initiated"
 	sap_doc.apr = apr_doc.name
 	sap_doc.apr_date = apr_doc.apr_date
+	sap_doc.sapf_assigned_to = apr_doc.apr_assigned_to
+	sap_doc.sapf_reviewed_by = apr_doc.apr_reviewed_by
 	sap_doc.sapf_assigned_to = apr_doc.sapf_assigned_to
 	sap_doc.sapf_reviewed_by = apr_doc.sapf_reviewed_by
 	sap_doc.company_code = apr_doc.company_code
@@ -159,5 +162,7 @@ def copy_po_line(source_docname, target_docname):
 			'po_line_qty': d.po_line_qty,
 			'inv_line_qty': d.inv_line_qty,
 			'inv_line_amt': d.inv_line_amt,
+			'gl_account': d.gl_account,
+			'cost_center': d.cost_center
 		})
 	target_doc.save()
