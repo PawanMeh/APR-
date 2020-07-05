@@ -88,7 +88,7 @@ class APRequest(Document):
 		bal_amt = 0
 		for d in self.invoice_line:
 			if self.closure_type in ["PO Invoice", "Non PO Invoice"] and (not d.po_line_ref or not d.po_line_amt or not d.po_line_qty or not d.inv_line_qty or not d.inv_line_amt or not d.gl_account or not d.cost_center):
-				frappe.throw(_("Please enter Invoice Line table values for PO Invoice and not Non PO Invoice"))
+				frappe.throw(_("Please enter all fields in Invoice Line table values for PO Invoice and Non PO Invoice"))
 			planned_cost += d.inv_line_amt
 		self.planned_cost = planned_cost
 		self.balance_amt = flt(self.invoice_amount) - flt(self.planned_cost) - flt(self.unplanned_cost)
