@@ -10,7 +10,7 @@
  "docstatus": 0, 
  "doctype": "DocType", 
  "document_type": "", 
- "editable_grid": 0, 
+ "editable_grid": 1, 
  "engine": "InnoDB", 
  "fields": [
   {
@@ -91,7 +91,7 @@
  "issingle": 0, 
  "istable": 1, 
  "max_attachments": 0, 
- "modified": "2020-07-03 02:50:59.696134", 
+ "modified": "2020-07-06 10:56:54.788537", 
  "modified_by": "Administrator", 
  "module": "AP Request", 
  "name": "AP Question Detail", 

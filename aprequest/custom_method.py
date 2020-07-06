@@ -16,6 +16,9 @@ def split_apr(docname):
 			ap_doc.apr_status = 'Initiated'
 			ap_doc.supplier = apr_doc.supplier
 			ap_doc.parent_apr = apr_doc.name
+			ap_doc.apr_assigned_to = apr_doc.apr_assigned_to
+			ap_doc.apr_reviewed_by = apr_doc.apr_reviewed_by
+			ap_doc.sapf_assigned_to = apr_doc.sapf_assigned_to
 			ap_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 			cpy_attachments('AP Request', docname, 'AP Request', ap_doc.name)
 			for d in apr_doc.conversation:
