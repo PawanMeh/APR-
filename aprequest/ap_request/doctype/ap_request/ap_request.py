@@ -89,24 +89,29 @@ class APRequest(Document):
 		if self.closure_type in ["PO Invoice", "Non PO Invoice"]:
 			if self.invoice_line:
 				for d in self.invoice_line:
-					if self.closure_type in ["PO Invoice", "Non PO Invoice"] and (not d.po_line_ref or not d.po_line_amt > 0 or not d.po_line_qty > 0 or not d.inv_line_qty > 0 or not d.inv_line_amt > 0 or not d.gl_account or not d.cost_center):
-						frappe.throw(_("Please enter all fields in Invoice Line table values for PO Invoice and Non PO Invoice"))
+					if self.closure_type == "PO Invoice" and (not d.po_line_ref or not d.po_line_amt > 0 or not d.po_line_qty > 0 or not d.inv_line_qty > 0 or not d.inv_line_amt > 0 or not d.gl_account or not d.cost_center or not d.tax_code):
+						frappe.throw(_("Please enter all fields in Invoice Line table values for PO Invoice"))
+					if self.closure_type == "Non PO Invoice" and (not d.po_line_ref):
+						frappe.throw(_("Please enter PO Line reference in Invoice Line table for Non PO Invoice"))
 					planned_cost += d.inv_line_amt
 			else:
 				frappe.throw(_("Please enter all values in invoice line table"))
 
 		self.planned_cost = planned_cost
 		self.balance_amt = flt(self.invoice_amount) - flt(self.planned_cost) - flt(self.unplanned_cost)
+
 		if self.closure_type == "Split" and (self.balance_amt != self.invoice_amount):
 			frappe.throw(_("Balance Amount should be equal to invoice amount"))
 		elif self.closure_type in ["PO Invoice", "Non PO Invoice"] and self.balance_amt != 0:
 			frappe.throw(_("Balance Amount should be zero for PO and Non PO Invoice. Check invoice amounts and PO line amounts."))
 
 	def on_update(self):
-		pass
+		self.planned_cost = planned_cost
+		self.balance_amt = flt(self.invoice_amount) - flt(self.planned_cost) - flt(self.unplanned_cost)
+
 	def on_submit(self):
 		#validate mandatory answers
-		if self.closure_type:
+		if self.closure_type and self.closure_type != "Short Close":
 			question = frappe.db.sql('''
 							select
 								enforce_mandatory

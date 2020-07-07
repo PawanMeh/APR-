@@ -83,9 +83,13 @@ def make_sap_feed(docname):
 	sap_doc.unplanned_cost = apr_doc.unplanned_cost
 	sap_doc.balance_amt = apr_doc.balance_amt
 	sap_doc.insert(ignore_mandatory=True, ignore_permissions=True)
-	file_url = apr_doc.final_invoice_copy or apr_doc.final_approval_copy
 	if sap_doc.name:
-		cpy_attachments('AP Request', apr_doc.name, 'SAP Feed', sap_doc.name,file_url)
+		if apr_doc.final_invoice_copy:
+			file_url = apr_doc.final_invoice_copy
+			cpy_attachments('AP Request', apr_doc.name, 'SAP Feed', sap_doc.name,file_url)
+		if apr_doc.final_approval_copy:
+			file_url = apr_doc.final_approval_copy
+			cpy_attachments('AP Request', apr_doc.name, 'SAP Feed', sap_doc.name,file_url)
 		apr_doc.sapf_id = sap_doc.name
 		apr_doc.sapf_status = "Initiated"
 		apr_doc.save()
@@ -172,3 +176,16 @@ def copy_po_line(source_docname, target_docname):
 			'cost_center': d.cost_center
 		})
 	target_doc.save()
+
+def update_count(self, method):
+	count = frappe.db.sql('''
+				select
+					count(name)
+				from
+					`tabFile`
+				where
+					attached_to_doctype = 'Issue' and
+					attached_to_name = %s
+				''', (self.name), as_dict=1)
+	if count:
+		self.no_of_invoices_attached = count[0][0]
