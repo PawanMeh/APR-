@@ -106,7 +106,6 @@ class APRequest(Document):
 			frappe.throw(_("Balance Amount should be zero for PO and Non PO Invoice. Check invoice amounts and PO line amounts."))
 
 	def on_update(self):
-		self.planned_cost = planned_cost
 		self.balance_amt = flt(self.invoice_amount) - flt(self.planned_cost) - flt(self.unplanned_cost)
 
 	def on_submit(self):
