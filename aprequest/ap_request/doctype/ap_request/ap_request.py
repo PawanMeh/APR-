@@ -96,6 +96,9 @@ class APRequest(Document):
 					planned_cost += d.inv_line_amt
 			else:
 				frappe.throw(_("Please enter all values in invoice line table"))
+		else:
+			for d in self.invoice_line:
+				planned_cost += d.inv_line_amt
 
 		self.planned_cost = planned_cost
 		self.balance_amt = flt(self.invoice_amount) - flt(self.planned_cost) - flt(self.unplanned_cost)
