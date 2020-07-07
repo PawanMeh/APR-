@@ -178,7 +178,7 @@ def copy_po_line(source_docname, target_docname):
 	target_doc.save()
 
 def update_count(self, method):
-	if self.doctype = "Issue":
+	if self.doctype == "Issue":
 		count = frappe.db.sql('''
 					select
 						count(name)
