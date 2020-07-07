@@ -188,4 +188,4 @@ def update_count(self, method):
 					attached_to_name = %s
 				''', (self.name), as_list=1)
 	if count:
-		self.no_of_invoices_attached = count[0][0]
+		self.attachment_check_total = count[0][0]
