@@ -79,6 +79,9 @@ def make_sap_feed(docname):
 	sap_doc.invoice_ref = apr_doc.invoice_ref
 	sap_doc.company_code_sap = apr_doc.company_code_sap
 	sap_doc.closure_type = apr_doc.closure_type
+	sap_doc.planned_cost = apr_doc.planned_cost
+	sap_doc.unplanned_cost = apr_doc.unplanned_cost
+	sap_doc.balance_amt = apr_doc.balance_amt
 	sap_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 	file_url = apr_doc.final_invoice_copy or apr_doc.final_approval_copy
 	if sap_doc.name:

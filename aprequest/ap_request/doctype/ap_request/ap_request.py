@@ -40,7 +40,8 @@ class APRequest(Document):
 						where
 							invoice_date = %s and
 							invoice_ref = %s and
-							name != %s
+							name != %s and
+							closure_type != 'Split'
 						''', (self.invoice_date, self.invoice_ref, self.name))
 		if inv_refs:
 			frappe.throw(_("Duplicate invoice exists for {0}".format("<a href='desk#Form/AP Request/{0}'> AP Request {0} </a>".format(inv_refs[0][0]))))
@@ -79,7 +80,6 @@ class APRequest(Document):
 			or not self.sapf_assigned_to or not self.final_invoice_copy or not self.final_approval_copy or
 			not self.eb_npi_approver or not self.eb_npi_email or not self.eb_npi_approval_obtained):
 			frappe.throw(_("SAP Company Code/SAPF Assigned To/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Email/EB NPI Obtained is mandatory for Non PO Invoice"))
-		#PO Line Table validations are pending
 
 		if date_diff(self.invoice_date, today()) > 0:
 			frappe.throw(_("Invoice date cannot be greater than current date"))
