@@ -186,6 +186,6 @@ def update_count(self, method):
 				where
 					attached_to_doctype = 'Issue' and
 					attached_to_name = %s
-				''', (self.name), as_dict=1)
+				''', (self.name), as_list=1)
 	if count:
 		self.no_of_invoices_attached = count[0][0]
