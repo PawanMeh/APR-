@@ -178,16 +178,17 @@ def copy_po_line(source_docname, target_docname):
 	target_doc.save()
 
 def update_count(self, method):
-	count = frappe.db.sql('''
-				select
-					count(name)
-				from
-					`tabFile`
-				where
-					attached_to_doctype = 'Issue' and
-					attached_to_name = %s
-				''', (self.attached_to_name), as_list=1)
-	if count:
-		issue_doc = frappe.get_doc('Issue', self.attached_to_name)
-		issue_doc.attachment_check_total = count[0][0]
-		issue_doc.save()
+	if self.doctype = "Issue":
+		count = frappe.db.sql('''
+					select
+						count(name)
+					from
+						`tabFile`
+					where
+						attached_to_doctype = 'Issue' and
+						attached_to_name = %s
+					''', (self.attached_to_name), as_list=1)
+		if count:
+			issue_doc = frappe.get_doc('Issue', self.attached_to_name)
+			issue_doc.attachment_check_total = count[0][0]
+			issue_doc.save()
