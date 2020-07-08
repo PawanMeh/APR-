@@ -126,7 +126,8 @@ class APRequest(Document):
 				for d in self.question:
 					if d.response == "No":
 						frappe.throw(_("Questionnaire repsonse should be either NA or Yes"))
-		else:
+
+		if not self.closure_type:
 			frappe.throw(_("Closure Type is mandatory"))
 
 		related_aprs = frappe.db.sql('''
