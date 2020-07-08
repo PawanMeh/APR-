@@ -195,7 +195,7 @@ def update_count(self, method):
 					where
 						name = %s
 				''', (self.attached_to_name), as_list=1)
-		if flt(count[0][0]) >= 0 and issue[0][0]:
+		if flt(count[0][0]) >= 0 and issue:
 			issue_doc = frappe.get_doc('Issue', self.attached_to_name)
 			issue_doc.attachment_check_total = count[0][0]
 			issue_doc.save()
