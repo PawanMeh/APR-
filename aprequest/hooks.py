@@ -113,7 +113,7 @@ doc_events = {
 	},
 	"File": {
 		"on_update": ["aprequest.custom_method.update_count"],
-		"on_trash": ["aprequest.custom_method.update_count"]
+		"after_delete": ["aprequest.custom_method.update_count"]
 	}
 }
 # Testing
