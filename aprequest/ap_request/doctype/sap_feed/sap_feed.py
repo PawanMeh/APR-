@@ -20,7 +20,7 @@ class SAPFeed(Document):
 	def on_submit(self):
 		if (not self.posting_date or not self.accounting_doc):
 			frappe.throw(_("Posting date and accounting doc are mandatory before approval."))
-		if (self.invoice_attached_is_correct == "No" or not self.approval_attached_is_correct == "No"):
+		if (self.invoice_attached_is_correct == "No" or self.approval_attached_is_correct == "No"):
 			frappe.throw(_("Invoice attached and Approval attached should be Yes/NA before final approval"))
 		apr_doc = frappe.get_doc('AP Request', self.apr)
 		apr_doc.posting_date = self.posting_date
