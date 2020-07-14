@@ -102,10 +102,10 @@ class APRequest(Document):
 
 		self.planned_cost = planned_cost
 		self.balance_amt = self.invoice_amount - self.planned_cost - self.unplanned_cost
-		frappe.msgprint("Balance Amount {0} invoice amount {1} planned - cost {2} unplanned - cost {3}".format(self.balance_amt, self.invoice_amount, self.planned_cost, self.unplanned_cost))
+		frappe.msgprint("Balance Amount {0} invoice amount {1} planned - cost {2} unplanned cost {3}".format(self.balance_amt, self.invoice_amount, self.planned_cost, self.unplanned_cost))
 		if self.closure_type == "Split" and (self.balance_amt != self.invoice_amount):
 			frappe.throw(_("Balance Amount should be equal to invoice amount"))
-		elif ((self.closure_type in ["PO Invoice", "Non PO Invoice"]) and (self.balance_amt != 0)):
+		elif ((self.closure_type in ["PO Invoice", "Non PO Invoice"]) and (self.balance_amt > 0.01 or self.balance_amt < - 0.01)):
 			frappe.throw(_("Balance Amount should be zero for PO and Non PO Invoice. Check invoice amounts and PO line amounts."))
 
 	def on_update(self):
