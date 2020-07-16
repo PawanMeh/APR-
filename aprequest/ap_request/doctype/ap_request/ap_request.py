@@ -18,7 +18,8 @@ class APRequest(Document):
 										question
 									from 
 										`tabQuestion Detail`
-									where parent = %s""", "APR", as_dict=1))
+									where parent = %s
+									order by seq_no""", "APR", as_dict=1))
 			self.set(table, [])
 			for d in rev_question_detail:
 				self.append(table, d)
