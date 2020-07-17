@@ -28,6 +28,11 @@ def get_data():
 					"type": "doctype",
 					"name": "Issue",
 					"description": _("AP Issue")
+				},
+				{
+					"type": "doctype",
+					"name": "Query",
+					"description": _("AP Query")
 				}
 			]
 		},
