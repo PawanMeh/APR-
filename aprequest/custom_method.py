@@ -173,7 +173,9 @@ def copy_po_line(source_docname, target_docname):
 			'inv_line_qty': d.inv_line_qty,
 			'inv_line_amt': d.inv_line_amt,
 			'gl_account': d.gl_account,
-			'cost_center': d.cost_center
+			'cost_center': d.cost_center,
+			'item_desc_in_po': d.item_desc_in_po,
+			'tax_code': d.tax_code
 		})
 	target_doc.save()
 
