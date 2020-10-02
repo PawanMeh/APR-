@@ -82,6 +82,8 @@ def make_sap_feed(docname):
 	sap_doc.planned_cost = apr_doc.planned_cost
 	sap_doc.unplanned_cost = apr_doc.unplanned_cost
 	sap_doc.balance_amt = apr_doc.balance_amt
+	sap_doc.remark_1 = apr_doc.remark_1
+	sap_doc.remark_2 = apr_doc.remark_2
 	sap_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 	if sap_doc.name:
 		if apr_doc.final_invoice_copy:
