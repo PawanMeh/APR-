@@ -111,12 +111,13 @@ class APRequest(Document):
 		if self.all_yes and self.all_na:
 			frappe.throw(_("You cannot check both All Yes and All NA"))
 
-		if self.all_yes:
-			for d in self.question:
-				d.response = "Yes"
-		elif self.all_na:
-			for d in self.question:
-				d.response = "NA"
+	def set_all_yes(self):
+		for d in self.question:
+			d.response = "Yes"
+
+	def set_all_na(self):
+		for d in self.question:
+			d.response = "NA"
 
 	def on_update(self):
 		self.balance_amt = flt(self.invoice_amount) - flt(self.planned_cost) - flt(self.unplanned_cost)
