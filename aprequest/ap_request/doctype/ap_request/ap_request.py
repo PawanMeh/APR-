@@ -40,11 +40,11 @@ class APRequest(Document):
 						from
 							`tabAP Request`
 						where
-							invoice_date = %s and
+							supplier = %s and
 							invoice_ref = %s and
 							name != %s and
 							closure_type != 'Split'
-						''', (self.invoice_date, self.invoice_ref, self.name))
+						''', (self.supplier, self.invoice_ref, self.name))
 		if inv_refs:
 			frappe.throw(_("Duplicate invoice exists for {0}".format("<a href='desk#Form/AP Request/{0}'> AP Request {0} </a>".format(inv_refs[0][0]))))
 
