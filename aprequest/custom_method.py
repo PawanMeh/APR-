@@ -223,5 +223,5 @@ def update_count(self, method):
 				''', (self.attached_to_name), as_list=1)
 		if flt(count[0][0]) >= 0 and cc_trans:
 			cc_doc = frappe.get_doc('Credit Card Transactions', self.attached_to_name)
-			cc_doc.attachment_check_total = count[0][0]
+			cc_doc.no_of_attachments = count[0][0]
 			cc_doc.save()
