@@ -203,3 +203,25 @@ def update_count(self, method):
 			issue_doc = frappe.get_doc('Issue', self.attached_to_name)
 			issue_doc.attachment_check_total = count[0][0]
 			issue_doc.save()
+#cc trans
+		count = frappe.db.sql('''
+					select
+						count(name)
+					from
+						`tabFile`
+					where
+						attached_to_doctype = 'Credit Card Transactions' and
+						attached_to_name = %s
+					''', (self.attached_to_name), as_list=1)
+		cc_trans = frappe.db.sql('''
+					select
+						name
+					from
+						`tabCredit Card Transactions`
+					where
+						name = %s
+				''', (self.attached_to_name), as_list=1)
+		if flt(count[0][0]) >= 0 and cc_trans:
+			cc_doc = frappe.get_doc('Credit Card Transactions', self.attached_to_name)
+			cc_doc.attachment_check_total = count[0][0]
+			cc_doc.save()
