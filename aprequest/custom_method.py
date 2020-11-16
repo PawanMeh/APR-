@@ -47,7 +47,7 @@ def make_apr(docname):
 	apr_doc.apr_date =  today()
 	apr_doc.apr_status = 'Initiated'
 	apr_doc.apr_assigned_to = issue_doc.apr_assigned_to
-	apr_doc.supplier = issue_doc.supplier	
+	apr_doc.supplier = issue_doc.vendor	
 	apr_doc.parent_issue = issue_doc.name
 	apr_doc.insert(ignore_mandatory=True, ignore_permissions=True)
 	if not issue_doc.apr:
@@ -55,7 +55,7 @@ def make_apr(docname):
 		issue_doc.save()
 	if apr_doc.name:
 		cpy_attachments('Issue', docname, 'AP Request', apr_doc.name)
-		frappe.msgprint("APR is created")
+		frappe.msgprint("APR {0} is created".format("<a href='desk#Form/AP Request/{0}'>{0}</a>".format(apr_doc.name)))
 
 @frappe.whitelist()
 def make_sap_feed(docname):
