@@ -49,6 +49,11 @@ def get_data():
 					"type": "doctype",
 					"name": "SAP Feed",
 					"description": _("SAP Feed")
+				},
+				{
+					"type": "doctype",
+					"name": "GR Request",
+					"description": _("GR Request")
 				}
 			]
 		},
