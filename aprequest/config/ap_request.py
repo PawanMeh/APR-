@@ -57,6 +57,17 @@ def get_data():
 				}
 			]
 		},
+		{	
+			"module_name": "AP Request",
+			"label": _("Time Tracking"),
+			"items": [
+				{
+					"type": "doctype",
+					"name": "Time Tracker",
+					"description": _("AP Request")
+				}
+			]
+		}
 	]
 
 	return data

@@ -114,6 +114,9 @@ doc_events = {
 	"File": {
 		"on_update": ["aprequest.custom_method.update_count"],
 		"after_delete": ["aprequest.custom_method.update_count"]
+	},
+	"Time Tracker": {
+		"validate": ["aprequest.custom_method.validate_time_tracker"]
 	}
 }
 # Testing

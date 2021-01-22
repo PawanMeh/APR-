@@ -225,3 +225,34 @@ def update_count(self, method):
 			cc_doc = frappe.get_doc('Credit Card Transactions', self.attached_to_name)
 			cc_doc.no_of_attachments = count[0][0]
 			cc_doc.save()
+
+def update_data():
+	apr = frappe.db.sql('''
+						select
+							parent,name,user_name
+						from
+							`tabAPR Status Tracker`
+						where
+							status_from = 'Initiated' and status_to = 'Prepared'
+						''')
+	apr_upd = frappe.db.sql('''
+							update
+								`tabAPR Status Tracker`
+							set 
+								first_preparer = %s
+							where
+								parent = %s and name != %s
+				''')
+
+def validate_time_tracker(self, method):
+	tt = frappe.db.sql('''
+			select
+				name
+			from
+				`tabTime Tracker`
+			where
+				user = %s and tt_date = %s
+				and name != %s''',
+				(self.user, self.tt_date, self.name))
+	if tt:
+		frappe.throw(_("Time tracker {0} already exists for the date and user combination".format(tt[0][0])))
