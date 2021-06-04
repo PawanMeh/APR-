@@ -19,7 +19,7 @@ class APRequest(Document):
 									from 
 										`tabQuestion Detail`
 									where parent = %s
-									order by seq_no""", "APR", as_dict=1))
+									""", "APR", as_dict=1))
 			self.set(table, [])
 			for d in rev_question_detail:
 				self.append(table, d)
@@ -81,6 +81,10 @@ class APRequest(Document):
 			or not self.sapf_assigned_to or not self.final_invoice_copy or not self.final_approval_copy or
 			not self.eb_npi_approver or not self.eb_npi_email or not self.eb_npi_approval_obtained):
 			frappe.throw(_("SAP Company Code/SAPF Assigned To/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Email/EB NPI Obtained is mandatory for Non PO Invoice"))
+		elif self.closure_type in ["PO Invoice", "Non PO Invoice"]:
+			for d in self.invoice_line:
+				if (not d.item_desc_in_po):
+					frappe.throw(_("Item Description is mandatory in PO or Non PO Invoice"))
 
 		if date_diff(self.invoice_date, today()) > 0:
 			frappe.throw(_("Invoice date cannot be greater than current date"))
@@ -162,6 +166,19 @@ class APRequest(Document):
 
 		#if related_issues:
 		#	frappe.throw(_("All related Issues should be closed before final approval of current APR"))
+		co_gr_check = frappe.db.sql('''
+						select
+							name
+						from
+							`tabGR Status Check`
+						where
+							co_code = %s and gr_status_check = 1
+						''', (self.company_code_sap))
+		if co_gr_check and (self.gr_status == "Pending" or not self.gr_posting_date):
+			frappe.throw(_("GR Posting Date and GR Status is mandatory for SAP Company Code"))
+
+		if "No Approval Rights APR" in frappe.get_roles(frappe.session.user):
+			frappe.throw(_("You do not have permission to submit leave allocation"))
 
 		if self.closure_type in ["PO Invoice", "Non PO Invoice"]:
 			make_sap_feed(self.name)
