@@ -50,37 +50,60 @@ class APRequest(Document):
 		if not (self.parent_apr or self.parent_issue):
 			frappe.throw(_("Cannot create APR without reference to Issue or parent APR"))
 
-		if self.closure_type in ["PO Invoice", "Non PO Invoice"] and not self.final_invoice_copy:
-			frappe.throw(_("Final Invoice copy is mandatory if closure is by PO Invoice or Non PO Invoice"))
+		#validate fields based on configuration
+		def get_msg(df):
+			return _("Value missing for {0}").format(_(df.label))
+		mandatory = []
+		fields = frappe.db.sql('''
+					select
+						field_name, label
+					from
+						`tabRequired Fields Mapper`
+					where
+						closure_action = %s
+					''', (self.closure_type), as_dict=1)
 
-		if self.closure_type == "Non PO Invoice" and not self.final_approval_copy:
-			frappe.throw(_("Final Approval copy is mandatory if closure is by Non PO Invoice"))
+		for df in fields:
+			if self.get(df.field_name) in (None, [], 0):
+				mandatory.append((df.field_name, get_msg(df)))
+
+		if mandatory:
+			frappe.throw('[{doctype}, {name}]: {fields}'.format(
+				fields=", ".join((each[1] for each in mandatory)),
+				doctype=self.doctype,
+				name=self.name))
+
+		#if self.closure_type in ["PO Invoice", "Non PO Invoice"] and not self.final_invoice_copy:
+		#	frappe.throw(_("Final Invoice copy is mandatory if closure is by PO Invoice or Non PO Invoice"))
+
+		#if self.closure_type == "Non PO Invoice" and not self.final_approval_copy:
+		#	frappe.throw(_("Final Approval copy is mandatory if closure is by Non PO Invoice"))
 
 		if self.closure_type == "Split" and self.no_of_split < 1:
 			frappe.throw(_("Enter no of APRs to be created via Split"))
 		elif self.closure_type in ["PO Invoice", "Non PO Invoice"] and self.no_of_split > 1:
 			frappe.throw(_("No of splits should be zero for closure type of PO and Non PO Invoice"))
 
-		if self.closure_type == "Split" and (self.sap_po_number or self.company_code_sap
-			or self.final_invoice_copy or self.final_approval_copy or
-			self.eb_npi_approver or self.eb_npi_email or self.eb_npi_approval_obtained):
-			frappe.throw(_("There should be no values in SAP PO Number/SAP Company Code/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Email/EB NPI Obtained for Closure Type of split"))
-		elif self.closure_type == "PO Invoice" and (self.final_approval_copy or
-			self.eb_npi_approver or self.eb_npi_email or self.eb_npi_approval_obtained):
-			frappe.throw("There should be no values in Final Approval Copy/EB NPI Approver/EP NPI Email/EB NPI Obtained for Closure Type of PO Invoice")
-		elif self.closure_type == "PO Invoice" and (not self.sap_po_number or not self.company_code_sap
-			or not self.sapf_assigned_to or not self.final_invoice_copy):
-			frappe.throw(_("SAP PO Number/SAP Company Code/SAPF Assigned To/Final Invoice Copy is mandatory for PO Invoice"))
+		#if self.closure_type == "Split" and (self.sap_po_number or self.company_code_sap
+		#	or self.final_invoice_copy or self.final_approval_copy or
+		#	self.eb_npi_approver or self.eb_npi_email or self.eb_npi_approval_obtained):
+		#	frappe.throw(_("There should be no values in SAP PO Number/SAP Company Code/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Email/EB NPI Obtained for Closure Type of split"))
+		#elif self.closure_type == "PO Invoice" and (self.final_approval_copy or
+		#	self.eb_npi_approver or self.eb_npi_email or self.eb_npi_approval_obtained):
+		#	frappe.throw("There should be no values in Final Approval Copy/EB NPI Approver/EP NPI Email/EB NPI Obtained for Closure Type of PO Invoice")
+		#elif self.closure_type == "PO Invoice" and (not self.sap_po_number or not self.company_code_sap
+		#	or not self.sapf_assigned_to or not self.final_invoice_copy):
+		#	frappe.throw(_("SAP PO Number/SAP Company Code/SAPF Assigned To/Final Invoice Copy is mandatory for PO Invoice"))
 		elif self.closure_type == "PO Invoice":
 			for d in self.invoice_line:
 				if (not d.po_line_ref or not d.po_line_amt or not d.po_line_qty or not d.inv_line_amt or not d.inv_line_qty):
 					frappe.throw(_("Please enter PO line details"))
-		elif self.closure_type == "Non PO Invoice" and (self.sap_po_number):
-			frappe.throw(_("SAP PO Number should be blank for Non PO Invoice"))
-		elif self.closure_type == "Non PO Invoice" and (not self.company_code_sap
-			or not self.sapf_assigned_to or not self.final_invoice_copy or not self.final_approval_copy or
-			not self.eb_npi_approver or not self.eb_npi_email or not self.eb_npi_approval_obtained):
-			frappe.throw(_("SAP Company Code/SAPF Assigned To/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Email/EB NPI Obtained is mandatory for Non PO Invoice"))
+		#elif self.closure_type == "Non PO Invoice" and (self.sap_po_number):
+		#	frappe.throw(_("SAP PO Number should be blank for Non PO Invoice"))
+		#elif self.closure_type == "Non PO Invoice" and (not self.company_code_sap
+		#	or not self.sapf_assigned_to or not self.final_invoice_copy or not self.final_approval_copy or
+		#	not self.eb_npi_approver or not self.eb_npi_email or not self.eb_npi_approval_obtained):
+		#	frappe.throw(_("SAP Company Code/SAPF Assigned To/Final Invoice Copy/Final Approval Copy/EB NPI Approver/EB NPI Email/EB NPI Obtained is mandatory for Non PO Invoice"))
 		elif self.closure_type in ["PO Invoice", "Non PO Invoice"]:
 			for d in self.invoice_line:
 				if (not d.item_desc_in_po):
